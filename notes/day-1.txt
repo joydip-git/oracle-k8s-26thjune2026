@@ -1,0 +1,123 @@
+https://github.com/joydip-git/oracle-k8s-26thjune2026
+
+Docker and Kubernetes:
+----------------------------
+Docker -> containerization tool
+Kubernetes -> orchestration of it
+
+
+Java SDK 21
+Springboot
+
+Virtual Machine (VM)
+
+Hypervisor -> VMM
+	1. Virtual Box
+	2. VMWare
+	3. Hyper-V
+
+Type-1 and Typ-2
+
+1. slow to start
+2. resource sensitive
+3. Each VM requires a full blown O/S s/w
+
+
+
+Docker -> meant to run on Linux
+
+chocolatey => apt
+
+Docker => s/w 
+
+
+Helm
+kubectl
+nerdctl
+Moby
+Docker Compose
+
+docker client s/w => docker CLI
+docker server => RESTful API server (docker engine or docker daemon or docker-d)
+
+life without docker -> VMs
+disadvantages
+what is docker?
+s/w:
+	- rancher desktop
+		- docker CLI
+		- docker engine
+		- kube controller (kubectl)
+
+
+architecture of docker:
+	tools - docker compose
+	client (CLI)
+	server (docker engine or docker daemon or dockerd)
+
+image and container:
+----------------------------
+
+docker swarm
+
+form Debian:latest
+.....
+
+view the file system for docker in windows:
+------------
+\\wsl.localhost\rancher-desktop
+
+Node JS
+
+>npm i
+
+server.js
+------------------
+const PORT = process.env.PORT <- comment this
+const PORT = 3000; <- use this
+
+>node .\server.js
+
+data:
+-------------
+Container Layer:
+-------------------
+a thin r/w+ container layer (exists as long as the container is not removed)
+
+mounts:
+-----------
+
+1. volumes: 
+-------------------
+NOT part of the container 
+stopping or removing will not result into lose of data
+**until and unless you remove those volumes
+managed by docker
+
+
+/feedback 		(volume) => var/lib/docker/data/feedback
+	*.txt
+
+/temp			(volume) => var/lib/docker/data/temp
+
+	*.txt
+
+
+a. named volume
+b. anonymous volume:
+
+bind mount:
+	host file system
+
+
+
+
+
+
+
+
+
+
+
+
+

@@ -1,0 +1,159 @@
+quick recap of day-1
+docker volumes
+docker networking
+docker compose
+environment variables
+
+Kubernetes introduction
+
+containerization
+	- VMs
+	- Docker
+
+what is docker?
+architecture of docker
+advantages of docker
+how docker works
+
+build a docker image
+build a docker container
+
+Persisting data for docker containers:
+-----------------------------------------
+1. container layer: inside the container
+	at the top of the image layer in the container, docjer containers offer a thin layer of read-write file system.
+	life is dependent on the container lifecycle.
+	if the container stops no problem, you will not loose any data
+	if the container is removed, you will loose the data
+
+2. mounts: outside the container
+	a. volumes
+	b. bind mounts
+	c. tmpfs (temporary file system)
+	e. named pipes
+
+a. volumes: persisting data in the host machine
+--------------------------------------------------
+persistent storage mechanism
+managed by docker
+
+/app/feedback
+
+1. named volumes
+	command: > docker volume create feedback-volume
+	command: > docker run -d --name feedback-service -p 3001:3000 -v feedback-volume:/app/feedback feedback-image:1.0.0
+	this is the best practice and suggested way of persisting data
+
+2. anonymous volumes
+	command: > docker run -d --name feedback-service -p 3001:3000 -v /app/feedback feedback-image:1.0.0
+
+	this is the best practice for some temporary data that you need during the runtime of the container app and not beyond that
+
+
+use of both types of volumes:
+--------------------------------
+> docker run -d --name feedback-service -p 3001:3000 -v /app/temp -v feedback-volume:/app/feedback feedback-image:1.0.0
+
+another difference between named and anonymous volumes:
+-------------------------------------------------------------
+any container using anonymous volume, if is started with --rm flag, the anonymous volume will be deleted as soon as you stop the container and removed.
+
+>docker rm container-name
+
+>docker run --rm -d --name feedback-service -p 3001:3000 -v /app/temp -v feedback-volume:/app/feedback feedback-image:1.0.0
+ 
+it does not happen in case if the anonymous volume has been shared with another container the anonymous volume will not be deleted even if the first container (that was started with --rm flag) is stopped and removed (for which the anonymous volume was originally created)
+
+any container using named volume, if is started with --rm flag, the volume will NOT be deleted as soon as you stop the container and removed.
+
+c. bind mounts:
+-----------------------
+you will provide the host system path which has to be mounted to the app (running inside a container) directory
+
+>docker run -d --name feedback-service -p 3001:3000 -v D:/training/oracle-k8s-26thjune2026/codes/day-2/data-volumes-app/feedback:/app/feedback  feedback-service feedback-image:1.0.0
+
+D:/training/oracle-k8s-26thjune2026/codes/day-2/data-volumes-app/feedback
+
+d. tmpfs:
+-------------
+applicable for Docker with Linux
+saved in the host system memory (temporary)
+
+all types of mounts:
+-------------------------
+> docker run 
+	--rm \
+	-d \
+	--name feedback-service \
+	-p 3001:3000 \
+	-p 3002:3000
+	-v feedback-volume:/app/feedback \
+	-v /app/node_modules \
+	-v D:/training/oracle-k8s-26thjune2026/codes/day-2/data-volumes-app/pages:/app/pages \
+	--tmpfs /app/temp \
+	feedback-image:1.0.0 \
+
+
+environment variables for an app running in the container
+----------------------------------------------------------------
+1. dockerfile
+	ENV PORT=3000
+	# ENV USERNAME=Joydip
+	# ENV PASSWORD=Joydip@123
+	EXPOSE ${PORT}
+2. when you create and start (run) the container through -e flag
+> docker run --rm -d --name feedback-service -p 3001:3000 -e USERNAME=joydip -e PASSWORD=Joytdip@123 feedback-image:1.0.0
+
+3. when you create and start (run) the container through -env-file flag (if there is an environment file from which values have to be supplied)
+
+> docker run --rm -d --name feedback-service -p 3001:3000 --env-file <file-path-and-name> feedback-image:1.0.0
+
+
+command:
+-----------------
+1. imperative way
+
+docker volume create feedback-volume
+
+docker run 
+	--rm \
+	-d \
+	-e XYZ=1000 \
+	--env-file .env \
+	--name feedback-service \
+	-p 3001:3000 \
+	-p 3002:3000 \
+	-v feedback-volume:/app/feedback \
+	-v /app/node_modules \
+	-v D:/training/oracle-k8s-26thjune2026/codes/day-2/data-volumes-app/pages:/app/pages \
+	--tmpfs /app/temp \
+	feedback-image:1.0.0 \
+
+2. declarative way
+	do write the same in a file (YAML)
+	docker-compose.yaml
+		service -> container
+		volume
+		network
+		
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

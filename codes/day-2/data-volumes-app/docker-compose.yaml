@@ -1,0 +1,25 @@
+services:
+  feedbackservice:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    env_file:
+      - ./.env
+    environment:
+      - PASSWORD=Joydip@123
+    volumes:
+      # named volume
+      - feedback-volume:/app/feedback
+      # anonymous volume
+      - /app/node_modules
+      # bind mount
+      - ./pages:/app/pages
+    tmpfs:
+      - /app/temp
+    ports:
+      - "3001:3000"
+      - "3002:3000"
+
+volumes:
+  feedback-volume:
+      

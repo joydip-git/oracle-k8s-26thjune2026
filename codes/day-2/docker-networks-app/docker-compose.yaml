@@ -1,0 +1,19 @@
+services:
+  mongoserver:
+    image: "mongo"
+    volumes:
+      - data:/data/db
+    ports:
+      - "27017:27017"
+
+  favserver:
+    image: "fav-image:2.0.0"
+    environment:
+      - DNSVALUE=mongoserver
+    ports:
+      - "3000:3000"
+    depends_on:
+      - mongoserver
+
+volumes:
+  data:

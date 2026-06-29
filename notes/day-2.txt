@@ -1,8 +1,8 @@
 quick recap of day-1
 docker volumes
-docker networking
-docker compose
 environment variables
+docker compose
+docker networking
 
 Kubernetes introduction
 
@@ -136,6 +136,48 @@ docker run
 		volume
 		network
 	docker-compose tool
+
+docker networks:
+------------------------
+app in a docker container
+
+1. wants to access some site for data (outside the scope of docker environment)
+ex: https://jsonplaceholder.typicode.com/todos (a RESTful API)
+	nothing to do here. any container running app can access WWW
+
+2. wants to access some service in host system
+	use "host.docker.internal" instead of "localhost"
+
+network drivers: host
+
+mongodb://host.docker.internal:27017 instead of mongodb://localhost:27017 
+
+3. wants to access some service running inside another docker container
+	mongodb
+
+create custom network under bridge driver
+>docker network create fav-net
+
+run mongo db image and connect to the fav-net
+>docker run --rm -d --name favserver -p 3000:3000 -e DNSVALUE=mongoserver --network fav-net fav-image:2.0.0
+
+run your app image and connect to the fav-net in order to access the mongo db container
+>docker run --rm -d --name favserver -p 3000:3000 -e DNSVALUE=mongoserver --network fav-net fav-image:2.0.0
+
+mongodb://mongoserver:27017
+
+When you start Docker, a default bridge network (also called bridge) is created automatically, and newly-started containers connect to it unless otherwise specified. 
+You can also create user-defined custom bridge networks. 
+User-defined bridge networks are superior to the default bridge network.
+
+default bridge network does not expose container name as its DNS name. you need to look up the container's IPv4 address in order to connect to that container from another container.
+
+custom bridge network does expose container name as its DNS name. you DO NOT need to look up the container's IPv4 address in order to connect to that container from another container. you can use the name of the other container as the DNS name.
+
+
+
+
+
 		
 
 

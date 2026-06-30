@@ -1,0 +1,7 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: key-value-pairs
+data:
+  portno: "3000"
+  

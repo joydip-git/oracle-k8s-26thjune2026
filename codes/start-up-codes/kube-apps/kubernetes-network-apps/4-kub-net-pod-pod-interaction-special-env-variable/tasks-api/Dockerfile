@@ -7,6 +7,7 @@ COPY package.json .
 RUN npm install
 
 COPY ./tasks-app.js ./
+COPY ./tasks ./tasks
 
 EXPOSE 3002
 

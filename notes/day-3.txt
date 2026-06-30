@@ -1,2 +1,63 @@
-Kubernetes volumes
-Kubernetes netwroking
+manual deployment:
+------------------------
+containers might crash and they will need replacement
+scale up => we need more containers
+we need to distribute network request to each container
+we might need to scale down when there is less workload
+
+Kubernetes:
+---------------------
+collection of tools and concepts
+
+kubectl
+
+
+PS D:\training\oracle-k8s-26thjune2026\codes\day-3\kub-first-app> kubectl create deployment kub-first-deployment --image=joydipdocker/kub-first:1.0.0       
+deployment.apps/kub-first-deployment created
+PS D:\training\oracle-k8s-26thjune2026\codes\day-3\kub-first-app> kubectl expose deployment kub-first-deployment --type=LoadBalancer --port 3000     
+service/kub-first-deployment exposed
+PS D:\training\oracle-k8s-26thjune2026\codes\day-3\kub-first-app> kubectl get services        
+NAME                   TYPE           CLUSTER-IP   EXTERNAL-IP     PORT(S)          AGE
+kub-first-deployment   LoadBalancer   10.43.43.7   192.168.127.2   3000:31669/TCP   63s
+kubernetes             ClusterIP      10.43.0.1    <none>          443/TCP          303d
+PS D:\training\oracle-k8s-26thjune2026\codes\day-3\kub-first-app> 
+
+
+
+replicas: Number of desired pods. This is a pointer to distinguish between explicit zero and not specified. Defaults to 1.
+
+Deployment: Deployment enables declarative updates for Pods and ReplicaSets.
+apiVersion (string)
+APIVersion defines the versioned schema of this representation of an object. Servers should convert recognized schemas to the latest internal value, and may reject unrecognized values
+
+template: Template describes the pods that will be created. The only allowed template.spec.restartPolicy value is "Always".
+
+PodTemplateSpec describes the data a pod should have when created from a template
+
+
+containers: List of containers belonging to the pod. Containers cannot currently be added or removed. There must be at least one container in a Pod. Cannot be updated.
+
+resources: Compute Resources required by this container. 
+
+
+Limits describes the maximum amount of compute resources allowed
+Requests describes the minimum amount of compute resources required. If Requests is omitted for a container, it defaults to Limits if that is explicitly specified, otherwise to an implementation-defined value. Requests cannot exceed Limits.
+
+
+selector: Label selector for pods. Existing ReplicaSets whose pods are selected by this will be the ones affected by this deployment. It must match the pod template's labels.
+
+A label selector is a label query over a set of resources. The result of matchLabels and matchExpressions are ANDed. An empty label selector matches all objects. A null label selector matches no objects.
+
+matchExpressions (object[])
+
+matchExpressions is a list of label selector requirements. The requirements are ANDed.
+
+matchLabels (object)
+
+matchLabels is a map of {key,value} pairs. A single {key,value} in the matchLabels map is equivalent to an element of matchExpressions, whose key field is "key", the operator is "In", and the values array contains only "value". The requirements are ANDed.
+
+
+selector property of spec property of Service kind:
+Route service traffic to pods with label keys and values matching this selector. If empty or not present, the service is assumed to have an external process managing its endpoints, which Kubernetes will not modify. 
+Only applies to types ClusterIP, NodePort, and LoadBalancer. Ignored if type is ExternalName.
+

@@ -5,6 +5,9 @@ const express = require('express');
 const bodyParser = require('body-parser');
 const axios = require('axios');
 
+const AUTH_DNS_NAME = process.env.AUTH_DNS_NAME;
+const AUTH_PORT_NO = process.env.AUTH_PORT_NO;
+
 const filePath = path.join(__dirname, process.env.TASKS_FOLDER, 'tasks.txt');
 
 const app = express();
@@ -17,7 +20,8 @@ const extractAndVerifyToken = async (headers) => {
   }
   const token = headers.authorization.split(' ')[1]; // expects Bearer TOKEN
 
-  const response = await axios.get('http://auth:3000/verify-token/' + token);
+  // const response = await axios.get('http://auth:3000/verify-token/' + token);
+    const response = await axios.get(`http://${AUTH_DNS_NAME}:${AUTH_PORT_NO}/verify-token/${token}`);
   return response.data.uid;
 };
 

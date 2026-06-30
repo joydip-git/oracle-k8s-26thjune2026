@@ -1,0 +1,35 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: tasks-deployment
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+       app: tasks-pod
+  template:
+    metadata:
+      labels:
+        app: tasks-pod
+    spec:
+      containers:
+        - name: tasks-container
+          image: joydipdocker/tasks-api-image:1.0.0
+          imagePullPolicy: Always
+          env:
+            - name: AUTH_DNS_NAME
+              # value: localhost
+              value: "auth-service.default"
+            - name: AUTH_PORT_NO
+              valueFrom:
+                configMapKeyRef:
+                  name: key-value-pairs
+                  key: authportno
+          # resources:
+          #   limits:
+          #     memory: "128Mi"
+          #     cpu: "250m"
+          #   requests:
+          #     memory: "64Mi"
+          #     cpu: "125m"
+            

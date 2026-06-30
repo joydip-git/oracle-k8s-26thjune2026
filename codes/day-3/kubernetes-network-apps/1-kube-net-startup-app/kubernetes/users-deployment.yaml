@@ -1,0 +1,36 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: users-deployment
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: users-pod
+  template:
+    metadata:
+      labels:
+        app: users-pod
+    spec:
+      containers:
+        - name: users-container
+          image: joydipdocker/users-api-image:2.0.0
+          imagePullPolicy: Always
+          env:
+            - name: PORT
+              valueFrom:
+                configMapKeyRef:
+                  name: key-value-pairs
+                  key: authportno
+            - name: AUTH_ADDRESS
+              # value: localhost
+              # value: "10.43.242.235" 
+              # this is cluster ip address of the auth-service
+              value: "auth-service.default"
+          resources:
+            limits:
+              memory: "256Mi"
+              cpu: "500m"
+            requests:
+              memory: "128Mi"
+              cpu: "250m"

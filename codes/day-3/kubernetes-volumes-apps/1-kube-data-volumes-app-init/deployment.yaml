@@ -1,0 +1,38 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: story-deployment
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: storybackend
+  template:
+    metadata:
+      labels:
+        app: storybackend
+    spec:
+      containers:
+        - name: story-container
+          image: joydipdocker/story-image:2.0.0
+          imagePullPolicy: Always
+          resources:
+            limits:
+              memory: "256Mi"
+              cpu: "250m"
+            requests:
+              memory: "128Mi"
+              cpu: "125m"
+          volumeMounts:
+            - mountPath: /app/story
+              name: story-data
+      volumes:
+        - name: story-data
+          persistentVolumeClaim:
+            claimName: host-pv-claim
+          # hostPath:
+          #   path: /storydata
+          #   type: DirectoryOrCreate
+          # emptyDir: {}
+            
+    

@@ -61,3 +61,147 @@ selector property of spec property of Service kind:
 Route service traffic to pods with label keys and values matching this selector. If empty or not present, the service is assumed to have an external process managing its endpoints, which Kubernetes will not modify. 
 Only applies to types ClusterIP, NodePort, and LoadBalancer. Ignored if type is ExternalName.
 
+
+
+1. communication between multiple containers in single pod
+2. a communication between a container in a pod with another container in another pod
+	a. two pods can run in the same worker node
+	b. two pods can run in the different worker nodes
+3. client/end user to pod communication
+
+service:
+groups the pods and provide a stable IP address for all of them
+this IP address can be exposed outside the cluster too as well as inside the cluster
+service groups the pods with labels
+
+ClusterIP: default service. 
+used for internal communication between containers/pods inside a cluster
+It is NOT internet facing. this will not allow the container to be access from outside the cluster
+
+NodePort:
+non-HTTP communication
+it exposes the app outside the cluster
+this will allow the app in a container to be accessed from outside the cluster
+can't handle high traffic since it does not offer load balancing or failover capabilities
+
+LoadBalancer:
+it exposes the app outside the cluster
+can handle high traffic since it does offer load balancing or failover capabilities by leveraging the cloud provider load balancing service
+
+ExternalName:
+app.test.com 
+CName record
+
+servicename_SERVICE_HOST
+
+MYSERVICE_SERVICE_HOST
+
+auth-service -> AUTH_SERVICE -> AUTH_SERVICE_SERVICE_HOST
+
+
+
+
+
+networks demo app:
+---------------------
+tasks-api: saving and retrieving tasks
+	exposes two APIs
+	1. one for saving task: localhost:3002/tasks (POST)
+	pass an JSON object:
+	example:
+	{
+ 	    "text":"learn angular",
+	    "title":"Angular Task"
+	}
+
+	2. one for getting the tasks: localhost:3002/tasks (GET)
+	ex:
+	{
+    		"message": "Tasks loaded.",
+    		"tasks": [
+        		{
+            	    	"title": "Angular Task",
+        	    	"text": "learn angular"
+        		}
+    		]
+	}
+
+	Note: both cases a JWT token has to be sent to this API for authorization
+	hence at first any user has to register and login themselves to get a JWT token
+
+users-api: 
+	exposes two APIs
+	1. one for registration: localhost:3001/signup (POST)
+	2. one for login: localhost:3001/login (POST)
+
+both cases pass an JSON object
+ex:
+
+{
+    "email":"joydip@demo.com",
+    "password":"Joydip123"
+}
+
+after successful login the end user will get a JWT token which has to be sent to tasks-api app APIs along with the request and other data
+
+auth-api: 
+	will be used internally by users-api and tasks-api. NOT to be used independently
+	exposes two APIs
+	
+	1. one for creating token: localhost:3000/auth/:hashedpassword (GET) 
+	- to be used by users-api to generate a token and send the same to end user
+
+	2. one for verifying token: localhost:3000/verify-token/:token (GET) 
+	- to be used by tasks-api to verify the token sent by the end user so that tasks can be saved or retrieved
+
+1. communication between multiple containers in single pod
+	put auth-api and users-api apps in two different container in a pod in a worker node
+
+	multiple container running inside a single pod can use "localhost" as the DNS name to interact with each other
+
+2. a communication between a container in a pod with another container in another pod
+	put auth-api and users-api apps in two different container in two different pods in a worker node
+	also put tasks-api in a different container in another pod 
+	
+	pods: 3
+	1 pod -> a container -> auth-api [will not be exposed to outside world]
+ 	1 pod -> a container -> users-api [will be exposed to outside world]
+	1 pod -> a container -> tasks-api [will be exposed to outside world]
+
+	a. stable IP address issued by the service controlling a pod
+	b. the same value is supplied by K8S to any application runtime (Node js) using a special environment variable named as the following:
+	SERVICENAME_SERVICE_HOST
+
+	ex: if the service name of the target pod is myservice
+	MYSERVICE_SERVICE_HOST
+
+	ex: if the service name of the target pod is my-service
+	MY_SERVICE_SERVICE_HOST
+
+	this environment variable you DO NOT NEED TO PASS, you can directly access in your app
+
+	c. the dns name
+		servicename.namespace
+	ex: if the service name of the target pod is myservice
+		myservice.default where default is the name of the namespace
+	ex: if the service name of the target pod is my-service
+		my-service.default where default is the name of the namespace
+
+
+3. client/end user to pod communication
+	the cloud provider will issue the URL with the IP address/DNS name
+	dev mode: depends on the port mapping in service.yaml file
+	Note: never use ClusterIP for the type of the service, use NodePort or LoadBalancer
+
+
+
+
+
+
+
+
+
+
+
+
+

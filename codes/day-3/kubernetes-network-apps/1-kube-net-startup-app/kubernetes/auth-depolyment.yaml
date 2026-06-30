@@ -1,0 +1,32 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: auth-deployment
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: auth-pod
+  template:
+    metadata:
+      labels:
+        app: auth-pod
+    spec:
+      containers:
+        - name: auth-container
+          image: joydipdocker/auth-api-image:1.0.0
+          imagePullPolicy: Always
+          env:
+            - name: PORT_NUMBER
+              valueFrom:
+                configMapKeyRef:
+                  name: key-value-pairs
+                  key: authportno
+          resources:
+            limits:
+              memory: "256Mi"
+              cpu: "500m"
+            requests:
+              memory: "128Mi"
+              cpu: "250m"
+

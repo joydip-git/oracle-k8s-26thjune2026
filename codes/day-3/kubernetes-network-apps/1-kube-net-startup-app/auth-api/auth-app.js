@@ -34,4 +34,4 @@ app.get('/hashed-password/:password', (req, res) => {
   res.status(200).json({ hashedPassword: hashedPassword });
 });
 
-app.listen(3000);
+app.listen(process.env.PORT_NUMBER);
